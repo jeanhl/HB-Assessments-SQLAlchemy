@@ -12,7 +12,7 @@ here, so feel free to refer to classes without the
 """
 
 from model import *
-
+from collections import defaultdict
 init_app()
 
 # -------------------------------------------------------------------
@@ -20,35 +20,63 @@ init_app()
 
 
 # Get the brand with the **id** of 8.
+# brand = Brand.query.filter_by(id=8).one()
 
-# Get all models with the **name** Corvette and the **brand_name** Chevrolet.
+# # Get all models with the **name** Corvette and the **brand_name** Chevrolet.
+# models = Model.query.filter_by(name="Corvette", brand_name="Chevrolet").all()
 
-# Get all models that are older than 1960.
+# # Get all models that are older than 1960.
+# models = Model.query.filter(Model.year < 1960).all()
 
-# Get all brands that were founded after 1920.
+# # Get all brands that were founded after 1920.
+# models = Model.query.filter(Model.year > 1920).all()
 
-# Get all models with names that begin with "Cor".
+# # Get all models with names that begin with "Cor".
+# models = Model.query.filter(Model.name.like("Cor%")).all()
 
-# Get all brands that were founded in 1903 and that are not yet discontinued.
+# # Get all brands that were founded in 1903 and that are not yet discontinued.
+# brands = Brand.query.filter(Brand.founded==1903, Brand.discontinued==None).all()
 
-# Get all brands that are either 1) discontinued (at any time) or 2) founded 
-# before 1950.
+# # Get all brands that are either 1) discontinued (at any time) or 2) founded 
+# # before 1950.
+# brands = Brand.query.filter((Brand.founded<1950) | (Brand.discontinued.isnot(None))).all()
 
-# Get any model whose brand_name is not Chevrolet.
+# # Get any model whose brand_name is not Chevrolet.
+# brands = Brand.query.filter(Brand.name.isnot("Chevrolet")).all()
 
 # Fill in the following functions. (See directions for more info.)
-
 def get_model_info(year):
     '''Takes in a year, and prints out each model, brand_name, and brand
     headquarters for that year using only ONE database query.'''
 
-    pass
+    cars = Model.query.filter_by(year=year).all()
+    info = []
+
+    for car in cars:
+        info.append(" *** Model name: %s, Brand name: %s, HQ: %s *** "  % (car.name,
+                                                          car.brand.name,
+                                                          car.brand.headquarters))
+    print info  
 
 def get_brands_summary():
     '''Prints out each brand name, and each model name for that brand
      using only ONE database query.'''
 
-    pass
+    models = Model.query.all()
+    car_dict = defaultdict(set)
+
+    for model in models:
+        car_dict[model.brand_name].add(model.name)
+
+    for item in car_dict:
+        car_models = []
+        for values in car_dict[item]:
+            car_models.append(values)
+        print "Brand: %s    Model: %s" % (item, car_models)
+
+
+
+
 
 # -------------------------------------------------------------------
 # Part 2.5: Discussion Questions (Include your answers as comments.)

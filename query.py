@@ -109,5 +109,6 @@ def get_models_between(start_year, end_year):
     list_models = []
     for brand in brands:
         model = Model.query.filter_by(brand_name=brand.name).all()
-        list_models.append(model)
+        for ea_model in model:
+            list_models.append(ea_model)
     print list_models

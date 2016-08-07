@@ -13,6 +13,7 @@ here, so feel free to refer to classes without the
 
 from model import *
 from collections import defaultdict
+
 init_app()
 
 # -------------------------------------------------------------------
@@ -82,16 +83,31 @@ def get_brands_summary():
 # Part 2.5: Discussion Questions (Include your answers as comments.)
 
 # 1. What is the returned value and datatype of ``Brand.query.filter_by(name='Ford')``?
+    # Value is [<B.Id=1 B.name=Ford Founded=1903 HQ=Dearborn, MI Discontinued=None>], 
+    # which is whatever we specified it to return in the model.py file.
+    # Datatype is a list of 1 object
 
 # 2. In your own words, what is an association table, and what *type* of relationship
 # does an association table manage?
+    # An association table is a "fake" table. It doesn't have any real purpose outside
+    # of conecting tables with no commonalites. Take our ratings project for an example,
+    # if there were an additional genres table, we'd have to connect the movies table 
+    # and the genres tables with an association table where each row containes 1 movie 
+    # and 1 genre.
 
 # -------------------------------------------------------------------
 # Part 3
 
-def search_brands_by_name(mystr):
-    pass
+def search_brands_by_name(thing):
+    brands = Brand.query.filter(Brand.name.like('%{}%'.format(thing))).all()
 
+    print brands
 
 def get_models_between(start_year, end_year):
-    pass
+    brands = Brand.query.filter(Brand.founded>start_year, Brand.founded<end_year).all()
+
+    list_models = []
+    for brand in brands:
+        model = Model.query.filter_by(brand_name=brand.name).all()
+        list_models.append(model)
+    print list_models
